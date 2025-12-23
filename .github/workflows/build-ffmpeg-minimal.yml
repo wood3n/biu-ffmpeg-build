@@ -103,26 +103,32 @@ jobs:
           make -j"$(nproc || sysctl -n hw.ncpu)"
           make install
 
+      - name: Copy ffmpeg binary into workspace (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          mkdir -p artifacts
+          cp "$HOME/ffmpeg-min/bin/ffmpeg" artifacts/ffmpeg
+
       - name: Show resulting binary info (Linux/macOS)
         if: runner.os != 'Windows'
         run: |
-          "$HOME/ffmpeg-min/bin/ffmpeg" -version
-          "$HOME/ffmpeg-min/bin/ffmpeg" -protocols
-          "$HOME/ffmpeg-min/bin/ffmpeg" -formats
+          artifacts/ffmpeg -version
+          artifacts/ffmpeg -protocols
+          artifacts/ffmpeg -formats
 
       - name: Upload ffmpeg binary artifact (Linux)
         if: runner.os == 'Linux'
         uses: actions/upload-artifact@v4
         with:
           name: ffmpeg-minimal-linux
-          path: ${{ env.HOME }}/ffmpeg-min/bin/ffmpeg
+          path: artifacts/ffmpeg
 
       - name: Upload ffmpeg binary artifact (macOS)
         if: runner.os == 'macOS'
         uses: actions/upload-artifact@v4
         with:
           name: ffmpeg-minimal-macos-${{ matrix.mac_arch }}
-          path: ${{ env.HOME }}/ffmpeg-min/bin/ffmpeg
+          path: artifacts/ffmpeg
 
       - name: Clone and build FFmpeg in MSYS2 (Windows)
         if: runner.os == 'Windows'
