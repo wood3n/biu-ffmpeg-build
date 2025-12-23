@@ -95,7 +95,7 @@ jobs:
             --disable-everything \
             --enable-protocol=file \
             --enable-demuxer=mov,matroska,flac,mp3,aac,mpegts \
-            --enable-muxer=mp4,matroska,flac,mp3 \
+            --enable-muxer=mp4,ipod,matroska,flac,mp3 \
             --enable-parser=aac,h264,hevc,mp3,flac,vorbis,opus \
             --enable-bsf=aac_adtstoasc,h264_metadata,hevc_metadata \
             --enable-small
@@ -151,7 +151,7 @@ jobs:
             --disable-everything \
             --enable-protocol=file \
             --enable-demuxer=mov,matroska,flac,mp3,aac,mpegts \
-            --enable-muxer=mp4,matroska,flac,mp3 \
+            --enable-muxer=mp4,ipod,matroska,flac,mp3 \
             --enable-parser=aac,h264,hevc,mp3,flac,vorbis,opus \
             --enable-bsf=aac_adtstoasc,h264_metadata,hevc_metadata \
             --enable-small \
