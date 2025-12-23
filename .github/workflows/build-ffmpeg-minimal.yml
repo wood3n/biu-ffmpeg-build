@@ -89,14 +89,13 @@ jobs:
             --disable-ffplay \
             --disable-ffprobe \
             --disable-avdevice \
-            --disable-postproc \
             --disable-swscale \
             --disable-network \
             --enable-ffmpeg \
             --disable-everything \
             --enable-protocol=file \
             --enable-demuxer=mov,matroska,flac,mp3,aac,mpegts \
-            --enable-muxer=mp4,matroska,flac \
+            --enable-muxer=mp4,matroska,flac,mp3 \
             --enable-parser=aac,h264,hevc,mp3,flac,vorbis,opus \
             --enable-bsf=aac_adtstoasc,h264_metadata,hevc_metadata \
             --enable-small
@@ -140,14 +139,13 @@ jobs:
             --disable-ffplay \
             --disable-ffprobe \
             --disable-avdevice \
-            --disable-postproc \
             --disable-swscale \
             --disable-network \
             --enable-ffmpeg \
             --disable-everything \
             --enable-protocol=file \
             --enable-demuxer=mov,matroska,flac,mp3,aac,mpegts \
-            --enable-muxer=mp4,matroska,flac \
+            --enable-muxer=mp4,matroska,flac,mp3 \
             --enable-parser=aac,h264,hevc,mp3,flac,vorbis,opus \
             --enable-bsf=aac_adtstoasc,h264_metadata,hevc_metadata \
             --enable-small

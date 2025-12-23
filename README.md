@@ -108,14 +108,13 @@ Linux 和 macOS 使用的配置命令（Windows 版本除 `--prefix` 路径外�
   --disable-ffplay \
   --disable-ffprobe \
   --disable-avdevice \
-  --disable-postproc \
   --disable-swscale \
   --disable-network \
   --enable-ffmpeg \
   --disable-everything \
   --enable-protocol=file \
   --enable-demuxer=mov,matroska,flac,mp3,aac,mpegts \
-  --enable-muxer=mp4,matroska,flac \
+  --enable-muxer=mp4,matroska,flac,mp3 \
   --enable-parser=aac,h264,hevc,mp3,flac,vorbis,opus \
   --enable-bsf=aac_adtstoasc,h264_metadata,hevc_metadata \
   --enable-small
@@ -162,12 +161,6 @@ Linux 和 macOS 使用的配置命令（Windows 版本除 `--prefix` 路径外�
 - 关闭 `libavdevice` 相关功能；
 - 这意味着不支持从摄像头、屏幕采集等设备直接采集；
 - 对三个典型命令（全部从文件读写）没有影响。
-
-#### `--disable-postproc`
-
-- 禁用后处理库（`libpostproc`）；
-- 主要用于视频解码后的画质增强/降噪等；
-- 本配置不执行解码，postproc 完全用不到。
 
 #### `--disable-swscale`
 
@@ -220,17 +213,19 @@ Linux 和 macOS 使用的配置命令（Windows 版本除 `--prefix` 路径外�
   - `aac`：裸 AAC（方便 `aac` → `m4a` 场景）；
   - `mpegts`：MPEG-TS 流（常见于直播/录制场景，方便 `ts` → `mp4/mkv`）。
 
-#### `--enable-muxer=mp4,matroska,flac`
+#### `--enable-muxer=mp4,matroska,flac,mp3`
 
-- muxer 负责“把流写入容器”（写出），这里只保留三种容器：
-  - `mp4`：对应 `.mp4` 及 `.m4a`（纯音频的 mp4 容器）；
-  - `matroska`：对应 `.mkv`；
-  - `flac`：对应 `.flac`。
-- 也就是说，**当前构建只支持生成这四种扩展名的文件**：
-  - `.mp4`
-  - `.m4a`（本质是 mp4 容器）
-  - `.mkv`
-  - `.flac`
+- muxer 负责“把流写入容器”（写出），这里保留四种容器：
+- - `mp4`：对应 `.mp4` 及 `.m4a`（纯音频的 mp4 容器）；
+- - `matroska`：对应 `.mkv`；
+- - `flac`：对应 `.flac`；
+- - `mp3`：对应 `.mp3`（裸 MP3 文件）。
+- 也就是说，**当前构建支持生成以下几种扩展名的文件**：
+- - `.mp4`
+- - `.m4a`（本质是 mp4 容器）
+- - `.mkv`
+- - `.flac`
+- - `.mp3`
 
 ### 3.7 parser：解析编码数据头信息
 
@@ -255,12 +250,14 @@ Linux 和 macOS 使用的配置命令（Windows 版本除 `--prefix` 路径外�
 - 当前启用的三个过滤器用处分别是：
 
 1. `aac_adtstoasc`
+
    - 常用于从 MPEG-TS 或 FLV 封装的 AAC 流转封到 MP4；
    - 将 ADTS 头（ADTS 帧）转换为适合 MP4 的 AudioSpecificConfig/ASC 表示；
    - 典型命令场景：
      - `ffmpeg -i input.ts -c:v copy -c:a copy output.mp4`
 
 2. `h264_metadata`
+
    - 修改 H.264 比特流中的 SPS/PPS 等元数据；
    - 在某些封装转换或兼容性场景中用于调整标志位；
    - 即使当前命令不显式使用，也属于常见“copy + 重封装” 配置的安全选项。
@@ -371,6 +368,7 @@ ffmpeg -i video -i audio -c:v copy -c:a copy -shortest output
 
 372→- `file` 协议：读取 `video`、`audio` 文件并写出 `output`；
 373→- 对应容器的 demuxer/muxer（例如 `mov`/`mp4`、`matroska`、`flac` 等）；
+
 - 对应编码的 parser（比如 `h264`、`aac`）；
 - 必要时的 bitstream filter（如从 TS → MP4 的 AAC）。
 
@@ -405,14 +403,15 @@ ffmpeg -i audio -c:a copy output
 
 ## 8. 当前精简版本支持的输出格式总结
 
-当前配置的 ffmpeg **只支持生成以下四种文件格式**：
+当前配置的 ffmpeg **只支持生成以下几种文件格式**：
 
 - `.mp4`
 - `.m4a`（实质为 mp4 容器的纯音频）
 - `.mkv`
 - `.flac`
+- `.mp3`
 
-如果命令中指定其他容器（例如 `-f mp3`，或输出文件名以 `.mp3` 结尾），ffmpeg 会报错提示缺少对应的 muxer。这是为了让二进制体积尽可能小，专注于少数几种封装格式的流复制和重封装场景。 
+如果命令中指定其他容器（例如 `-f ogg`，或输出文件名以 `.ogg` 结尾），ffmpeg 会报错提示缺少对应的 muxer。这是为了让二进制体积尽可能小，专注于少数几种封装格式的流复制和重封装场景。
 
 ---
 
@@ -443,4 +442,4 @@ ffmpeg -i audio -c:a copy output
 - 如果未来需要做转码（非 copy）：
   - 需要显式启用对应的 `encoder` / `decoder` / `filter`，例如 `--enable-encoder=aac`、`--enable-filter=aresample` 等。
 
-当前配置严格围绕“copy 封装 + 常见容器/编码的复用”设计，适合作为集成于应用或服务中的轻量级 FFmpeg 工具。 
+当前配置严格围绕“copy 封装 + 常见容器/编码的复用”设计，适合作为集成于应用或服务中的轻量级 FFmpeg 工具。
