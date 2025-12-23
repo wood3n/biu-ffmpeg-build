@@ -115,14 +115,14 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ffmpeg-minimal-linux
-          path: $HOME/ffmpeg-min/bin/ffmpeg
+          path: ${{ env.HOME }}/ffmpeg-min/bin/ffmpeg
 
       - name: Upload ffmpeg binary artifact (macOS)
         if: runner.os == 'macOS'
         uses: actions/upload-artifact@v4
         with:
           name: ffmpeg-minimal-macos-${{ matrix.mac_arch }}
-          path: $HOME/ffmpeg-min/bin/ffmpeg
+          path: ${{ env.HOME }}/ffmpeg-min/bin/ffmpeg
 
       - name: Clone and build FFmpeg in MSYS2 (Windows)
         if: runner.os == 'Windows'
