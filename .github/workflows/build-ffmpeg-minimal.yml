@@ -154,7 +154,11 @@ jobs:
             --enable-muxer=mp4,matroska,flac,mp3 \
             --enable-parser=aac,h264,hevc,mp3,flac,vorbis,opus \
             --enable-bsf=aac_adtstoasc,h264_metadata,hevc_metadata \
-            --enable-small
+            --enable-small \
+            --disable-shared \
+            --enable-static \
+            --pkg-config-flags="--static" \
+            --extra-ldflags="-static -static-libgcc -static-libstdc++"
 
           make -j"$(nproc)"
           make install
