@@ -91,6 +91,7 @@ jobs:
             --disable-avdevice \
             --disable-swscale \
             --disable-network \
+            --disable-xlib \
             --enable-ffmpeg \
             --disable-everything \
             --enable-protocol=file \
